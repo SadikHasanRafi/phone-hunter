@@ -10,6 +10,7 @@ const searchPhone = () => {
         .then(res => res.json())
         .then(phones => phoneData(phones.data, phones.status));
 
+    inputBox.value = "";
 }
 
 const phoneData = (phones, status) => {
@@ -20,18 +21,21 @@ const phoneData = (phones, status) => {
     // if user input is not found in the api
     if (status == false) {
         const notFound = document.createElement("h1");
-        notFound.innerText = "No Phone Found";
-        notFound.classList.add("text-center", "w-100");
+        notFound.innerText = "No Phone Found 😓";
+        notFound.classList.add("text-center", "w-100", "font-monospace", "text-danger");
         phoneContainer.appendChild(notFound);
     }
 
+    let counter = 0;
+
     //Loop through every single object 
-    let phone = 0;
+    for (let phone of phones) {
 
-    for (phone of phones) {
-        phone++;
+        //Counting
+        counter++;
 
-        if (i <= 20) {
+        //Stop counter if phones length in 20
+        if (counter <= 20) {
             // Creating a new card
             const card = document.createElement("div");
 
@@ -49,9 +53,9 @@ const phoneData = (phones, status) => {
             // Containing the div
             phoneContainer.appendChild(card);
 
-    } else {
-        break;
-    }
+        } else {
+            break;
+        }
 
     }
 
@@ -63,13 +67,11 @@ const phoneDetail = details => {
         .then(res => res.json())
         .then(detailsData => showDetails(detailsData.data));
 
-    // let detailDiv = document.getElementsByClassName("detailDiv");
-    // detailDiv.textContent = "";
 }
 
+const detailsDiv = document.createElement("div");
 const showDetails = data => {
 
-    const detailsDiv = document.createElement("div");
     detailsDiv.classList.add("card", "col-12", "mb-3", "detailDiv");
     detailsDiv.innerHTML = `
         <div class="row g-0">
@@ -79,26 +81,25 @@ const showDetails = data => {
         <div class="col-md-8">
         <div class="card-body py-5">
             <h5 class="card-title">${data.name}</h5>
-            <p class="card-text"><small class="text-muted">${data.releaseDate}</small></p>
+            <p class="card-text"><small class="text-muted">${data?.releaseDate || "No Release Date Found"}</small></p>
             <p class="card-text">Storage: ${data.mainFeatures.displaySize}</p>
             <p class="card-text">Chipset: ${data.mainFeatures.chipSet} </p>
             <p class="card-text">Memory: ${data.mainFeatures.memory}</p><hr>
             <p class="card-text">Sensors:<br> ${data.mainFeatures.sensors}</p><hr>
             <p class="card-text">Others:<br>
-                Bluetooth: ${data.others.Bluetooth}<br>
-                GPS: ${data.others.GPS}<br>
-                NFC: ${data.others.NFC}<br>
-                Radio: ${data.others.Radio}<br>
-                USB: ${data.others.USB}<br>
-                WLAN: ${data.others.WLAN}
+                Bluetooth: ${data.others?.Bluetooth || "N/A"}<br>
+                GPS: ${data.others?.GPS || "N/A"}<br>
+                NFC: ${data.others?.NFC || "N/A"}<br>
+                Radio: ${data.others?.Radio || "N/A"}<br>
+                USB: ${data.others?.USB || "N/A"}<br>
+                WLAN: ${data.others?.WLAN || "N/A"}
             </p>
         </div>
         </div>
     </div>
     `
 
-    phoneContainer.prepend(detailsDiv)
-    console.log(data)
+    phoneContainer.prepend(detailsDiv);
 }
 
 // Showing the phones when the search button has been clicked
