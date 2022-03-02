@@ -1,7 +1,7 @@
 // Document Define
 const searchBtn = document.getElementById("searchBtn");
 let inputBox = document.getElementById("inputBox");
-const phoneContainer = document.getElementById("phoneContainer")
+const phoneContainer = document.getElementById("phoneContainer");
 
 // Search Function
 const searchPhone = () => {
@@ -38,15 +38,57 @@ const phoneData = (phones, status) => {
                         <img src="${phone.image}" class="card-img-top d-block m-auto my-3" alt="Product Img" style="width: 60%;">
                         <h5 class="card-title fw-bold text-capitalize text-sm-center text-lg-start">${phone.phone_name}</h5>
                         <p class="text-capitalize text-sm-center text-lg-start">Brand: <span class="text-success">${phone.brand}</span></p>
-                        <a href="#" class="btn btn-dark w-100">Details</a>
+                        <a href="#" class="btn btn-dark w-100" onclick="phoneDetail(${ "'" + phone.slug + "'"})">Details</a>
                     `;
 
         // Containing the div
         phoneContainer.appendChild(card);
-        console.log(phone);
 
     });
 
 }
+//Details Data
+const phoneDetail = details => {
+    //Fetching API
+    fetch(`https://openapi.programming-hero.com/api/phone/${details}`)
+        .then(res => res.json())
+        .then(detailsData => showDetails(detailsData.data));
+}
+
+const showDetails = data => {
+
+    const detailsDiv = document.createElement("div");
+    detailsDiv.classList.add("card", "col-12", "mb-3");
+    detailsDiv.innerHTML = `
+        <div class="row g-0">
+        <div class="col-md-4">
+        <img src="${data.image}" class=" img-fluid d-block pt-5 m-auto rounded-start" alt="...">
+        </div>
+        <div class="col-md-8">
+        <div class="card-body py-5">
+            <h5 class="card-title">${data.name}</h5>
+            <p class="card-text"><small class="text-muted">${data.releaseDate}</small></p>
+            <p class="card-text">Storage: ${data.mainFeatures.displaySize}</p>
+            <p class="card-text">Chipset: ${data.mainFeatures.chipSet} </p>
+            <p class="card-text">Memory: ${data.mainFeatures.memory}</p><hr>
+            <p class="card-text">Sensors:<br> ${data.mainFeatures.sensors}</p><hr>
+            <p class="card-text">Others:<br>
+                Bluetooth: ${data.others.Bluetooth}<br>
+                GPS: ${data.others.GPS}<br>
+                NFC: ${data.others.NFC}<br>
+                Radio: ${data.others.Radio}<br>
+                USB: ${data.others.USB}<br>
+                WLAN: ${data.others.WLAN}
+            </p>
+        </div>
+        </div>
+    </div>
+    `
+
+    phoneContainer.prepend(detailsDiv)
+    console.log(data)
+}
+
+
 // Showing the phones when the search button has been clicked
 searchBtn.onclick = searchPhone;
