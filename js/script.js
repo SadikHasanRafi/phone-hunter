@@ -53,6 +53,7 @@ const phoneData = (phones, status) => {
             // Containing the div
             phoneContainer.appendChild(card);
 
+
         } else {
             break;
         }
